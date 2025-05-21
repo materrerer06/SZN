@@ -25,7 +25,7 @@ export class SznComponent {
   }
 
   get today(): string {
-    const d = new Date();x
+    const d = new Date();
     return d.toISOString().slice(0, 10);
   }
 
