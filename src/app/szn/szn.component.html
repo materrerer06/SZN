@@ -1,0 +1,27 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Lista nawyków</h2>
+  <div class="input-group mb-3">
+    <input [(ngModel)]="newAddiction" type="text" class="form-control" placeholder="nawyk" />
+    <button class="btn btn-primary" (click)="addAddiction()">Dodaj</button>
+  </div>
+  <ul class="list-group">
+    <li *ngFor="let addiction of addictions; let i = index" class="list-group-item d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <span class="me-3">{{ addiction.name }}</span>
+        <div class="form-check me-2">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            [checked]="addiction.checkedDays[today]"
+            (change)="toggleToday(addiction)"
+            id="check-{{i}}"
+          />
+          <label class="form-check-label" [for]="'check-' + i">
+            Zrobione dzisiaj ({{ today }})
+          </label>
+        </div>
+      </div>
+      <button class="btn btn-danger btn-sm" (click)="removeAddiction(i)">Usuń</button>
+    </li>
+  </ul>
+</div>
