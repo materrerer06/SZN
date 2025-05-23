@@ -1,0 +1,89 @@
+describe('example to-do app', () => {
+  beforeEach(() => {
+    cy.visit('https://aheaco.t24.ovh/')
+  })
+
+  it('Sprawdzenie elementów strony', () => {
+    cy.get('h1').contains('Problem komiwojażera - Algorytm Mrówkowy ACO')
+    cy.get('h2').contains('Konfiguracja')
+    cy.get('h2').contains('Wizualizacja najkrótszej trasy')
+    cy.get('h2').contains('Histogram odległości tras')
+    cy.get('h2').contains('Statystyki')
+    //cy.get('h2').contains('Top 5 najkrótszych tras')
+    cy.get('h2').contains('Lista miast')
+    cy.get('.controls')
+      .should('have.css', 'display', 'flex')
+      .and('have.css', 'background-color', 'rgb(240, 248, 245)')
+    cy.get('.control-group .generateButton[id="#0d423a"]')
+      .should('have.css', 'background-color', 'rgb(10, 66, 58)')
+    cy.get('.control-group .stopbtn[id="#0d423a"]')
+      .should('have.css', 'background-color', 'rgb(170, 217, 208)')
+    cy.get('.control-group .clearbtn')
+      .should('have.css', 'background-color', 'rgb(69, 183, 167)')
+    cy.get('.control-group .savebtn')
+      .should('have.css', 'background-color', 'rgb(255, 255, 255)')
+    cy.get('.table tr:nth-child(4n) .controls')
+      .should('have.css', 'background-color', 'rgb(240, 248, 245)')
+      .and('have.css', 'color', 'rgb(0, 0, 0)')
+  })
+
+  it('Sprawdzenie generatora miast', () => {
+    for (let i = 0; i < 2; i++) {
+      cy.get('#cityCount').clear()
+      cy.get('#cityCount').type(Math.floor(Math.random() * 100) + 10)
+      cy.get('#generateBtn').click()
+    }
+  })
+
+  it('Sprawdzenie dodawania miast przez kliknięcie', () => {
+    cy.get('#cityCount').clear()
+    cy.get('#generateBtn').click()
+    cy.get('#addCityBtn').click()
+    for (let i = 0; i < 50; i++) {
+      let x = Math.floor(Math.random() * 400) + 10
+      let y = Math.floor(Math.random() * 200) + 10
+      cy.get('.visualization-container canvas').click(x, y)
+    }
+  })
+
+  it('Sprawdzenie usuwania miast', () => {
+    cy.get('#cityCount').clear()
+    cy.get('#cityCount').type('10')
+    cy.get('#generateBtn').click()
+    cy.get('.remove-btn').should('have.length.greaterThan', 0)
+    cy.get('.remove-btn').then(($buttons) => {
+      const count = $buttons.length
+      for (let i = 0; i < count; i++) {
+        cy.get('.remove-btn').first().click()
+      }
+    })
+  })
+
+  it('Sprawdzenie obliczanie najkrodszej trasy', () => {
+    cy.get('#cityCount').clear()
+    cy.get('#generateBtn').click()
+    cy.get('#addCityBtn').click()
+    cy.get('.route, .trasa, [data-route], canvas').should('exist')
+  })
+
+  it('Sprawdzenie istnienia legendy', () => {
+    cy.contains(/legenda/i).should('exist')
+    cy.get('.legend-container').should('exist')
+  })
+
+  it('Sprawdzenie istnienia 5 tras po obliczeniu tras', () => {
+    cy.get('#cityCount').clear()
+    cy.get('#generateBtn').click()
+    cy.get('#addCityBtn').click()
+    cy.get('.top-routes').should('have.length', 5)
+
+  })
+
+  it('Sprawdzenie istnienia statystyk po obliczeniu tras', () => {
+    cy.get('#cityCount').clear()
+    cy.get('#generateBtn').click()
+    cy.get('#addCityBtn').click()
+    cy.contains(/statystyki|długość|trasa|średnia/i).should('exist')
+    cy.get('.stats, #stats').should('exist')
+  })
+})
